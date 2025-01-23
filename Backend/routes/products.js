@@ -14,5 +14,4 @@ router.route("/products/:id").get(getProductDetails);
 router.route("/products/:id").put(updateProduct);
 router.route("/products/:id").delete(deleteProduct);
 
-
 export default router;
