@@ -5,6 +5,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import sendToken from "../utils/sendToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
+
 // Register user   =>  /api/v1/register
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -130,3 +131,31 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
   sendToken(user, 200, res);
 });
+
+//Get current user profile => /api/v1/me
+export const getUserProfile = catchAsyncErrors(async(req,res,next) => {
+  const user = await User.findById(req?.user?._id);
+
+  res.status(200).json({
+    user,
+  });
+})
+
+//Update Password => /api/v1/password/update
+export const updatePassword = catchAsyncErrors(async(req,res,next) => {
+  const user = await User.findById(req?.user?._id).select("+password");
+
+  //check the previous password
+  const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+
+  if(!isPasswordMatched){
+    return next(new ErrorHandler('Old password is incorrect', 400));
+  }
+
+  user.password = req.body.password;
+  user.save();
+  
+  res.status(200).json({
+    user,
+  });
+})
