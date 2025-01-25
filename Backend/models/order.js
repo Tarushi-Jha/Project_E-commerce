@@ -16,12 +16,16 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User",
-      },
+    },
 
-      orderItems: [
+    orderItems: [
         {
           name: {
             type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
             required: true,
           },
           image: {
@@ -38,28 +42,35 @@ const orderSchema = new mongoose.Schema({
             ref: "Product",
           },
         },
-      ],
-      paymentMethod: {
+    ],
+    paymentMethod: {
         type: String,
         required: [true, "Please select payment method"],
         enum: {
           values: ["COD", "UPI"],
           message: "Please select: COD or UPI",
         },
-      },
-      paymentInfo: {
+    },
+    paymentInfo: {
         id: String,
         status: String,
-      },
-      itemsPrice: {
+    },
+    itemsPrice: {
         type: Number,
         required: true,
-      },
-      totalAmount: {
+    },
+    totalAmount: {
         type: Number,
         required: true,
-      },
-      deliveredAt: Date,
+    },
+    orderStatus: {
+        type: String,
+        enum: {
+          values: ["Processing", "Delivered"],
+          message: "Please select correct order status",
+        },
+    },
+    deliveredAt: Date,
     },
     { timestamps: true }
 );
