@@ -1,6 +1,7 @@
 import "./App.css";
 
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
@@ -10,6 +11,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <Toaster position="top-center" /> 
         <Header/>
         
         <div className="container">
