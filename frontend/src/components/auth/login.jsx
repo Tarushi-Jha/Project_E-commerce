@@ -60,6 +60,11 @@ const Login = () => {
           >
             {isLoading ? "Authenticating..." : "LOGIN"}
           </button>
+          <div className="my-3">
+            <a href="/register" className="float-end">
+              New User?
+            </a>
+          </div>
         </form>
       </div>
     </div>
