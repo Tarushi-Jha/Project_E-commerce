@@ -60,8 +60,11 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
 
 // Upload user avatar   =>  /api/v1/me/upload_avatar
 export const uploadAvatar = catchAsyncErrors(async (req, res, next) => {
-  const avatarResponse = await upload_file(req.body.avatar, "CollegeCart/avatars");
-  
+  const avatarResponse = await upload_file(
+    req.body.avatar,
+    "CollegeCart/avatars"
+  );
+
   // Remove previous avatar
   if (req?.user?.avatar?.url) {
     await delete_file(req?.user?.avatar?.public_id);
@@ -91,7 +94,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   await user.save();
 
   // Create reset password url
-  const resetUrl = `${process.env.FRONTEND_URL}/api/v1/password/reset/${resetToken}`;
+  const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
 
   const message = getResetPasswordTemplate(user?.name, resetUrl);
 
@@ -152,7 +155,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 //Get current user profile => /api/v1/me
-export const getUserProfile = catchAsyncErrors(async(req,res,next) => {
+export const getUserProfile = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req?.user?._id);
 
   res.status(200).json({
@@ -161,14 +164,14 @@ export const getUserProfile = catchAsyncErrors(async(req,res,next) => {
 });
 
 //Update Password => /api/v1/password/update
-export const updatePassword = catchAsyncErrors(async(req,res,next) => {
+export const updatePassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req?.user?._id).select("+password");
 
   //check the previous password
   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
-  if(!isPasswordMatched){
-    return next(new ErrorHandler('Old password is incorrect', 400));
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler("Old password is incorrect", 400));
   }
 
   user.password = req.body.password;
@@ -180,23 +183,23 @@ export const updatePassword = catchAsyncErrors(async(req,res,next) => {
 });
 
 //Update User Profile => /api/v1/me/update
-export const updateProfile = catchAsyncErrors(async(req,res,next) => {
+export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
-    email: req.body.email
-  }
+    email: req.body.email,
+  };
 
   const user = await User.findByIdAndUpdate(req.user._id, newUserData, {
     new: true,
   });
-  
+
   res.status(200).json({
     user,
   });
 });
 
 //Get all users - ADMIN => /api/v1/admin/users
-export const allUsers = catchAsyncErrors(async(req,res,next) => {
+export const allUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find();
 
   res.status(200).json({
@@ -205,10 +208,10 @@ export const allUsers = catchAsyncErrors(async(req,res,next) => {
 });
 
 //Get User Details - ADMIN => /api/v1/admin/users/:id
-export const getUserDetails = catchAsyncErrors(async(req,res,next) => {
+export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
-  if(!user){
+  if (!user) {
     return next(
       new ErrorHandler(`User not found with id: ${req.params.id}`, 404)
     );
@@ -220,27 +223,27 @@ export const getUserDetails = catchAsyncErrors(async(req,res,next) => {
 });
 
 //Update User Details => /api/v1/admin/users/:id
-export const updateUser = catchAsyncErrors(async(req,res,next) => {
+export const updateUser = catchAsyncErrors(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
-  }
+  };
 
   const user = await User.findByIdAndUpdate(req.params._id, newUserData, {
     new: true,
   });
-  
+
   res.status(200).json({
     user,
   });
 });
 
 //Delete User - ADMIN => /api/v1/admin/users/:id
-export const deleteUser = catchAsyncErrors(async(req,res,next) => {
+export const deleteUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
-  if(!user){
+  if (!user) {
     return next(
       new ErrorHandler(`User not found with id: ${req.params.id}`, 404)
     );

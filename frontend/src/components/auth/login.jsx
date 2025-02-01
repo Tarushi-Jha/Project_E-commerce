@@ -66,6 +66,10 @@ const Login = () => {
             />
           </div>
 
+          <a href="/password/forgot" className="float-end mb-4">
+            Forgot Password?
+          </a>
+
           <button
             id="login_button"
             type="submit"
