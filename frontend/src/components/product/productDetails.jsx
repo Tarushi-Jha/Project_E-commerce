@@ -4,6 +4,7 @@ import { useGetProductDetailsQuery } from "../../redux/api/productApi";
 import { toast } from "react-hot-toast";
 import Loader from "../layout/Loader";
 import { useDispatch } from "react-redux";
+import { setCartItem } from "../../redux/features/cartSlice";
 import MetaData from "../layout/MetaData";
 
 const ProductDetails = () => {
@@ -48,6 +49,20 @@ const ProductDetails = () => {
 
     const qty = count.valueAsNumber - 1;
     setQuantity(qty);
+  };
+
+  const setItemToCart = () => {
+    const cartItem = {
+      product: product?._id,
+      name: product?.name,
+      price: product?.price,
+      image: product?.images[0]?.url,
+      stock: product?.stock,
+      quantity,
+    };
+
+    dispatch(setCartItem(cartItem));
+    toast.success("Item added to Cart");
   };
 
   if (isLoading) return <Loader />;
@@ -112,6 +127,7 @@ const ProductDetails = () => {
             id="cart_btn"
             className="btn btn-primary d-inline ms-4"
             disabled={product.stock <= 0}
+            onClick={setItemToCart}
           >
             Add to Cart
           </button>
