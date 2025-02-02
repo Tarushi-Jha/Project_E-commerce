@@ -1,11 +1,46 @@
 import React from "react";
 import MetaData from "../layout/MetaData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { setCartItem, removeCartItem } from "../../redux/features/cartSlice";
 
 const Cart = () => {
+  const dispatch = useDispatch();
 
   const { cartItems } = useSelector((state) => state.cart);
+
+  const increseQty = (item, quantity) => {
+    const newQty = quantity + 1;
+
+    if (newQty > item?.stock) return;
+
+    setItemToCart(item, newQty);
+  };
+
+  const decreseQty = (item, quantity) => {
+    const newQty = quantity - 1;
+
+    if (newQty <= 0) return;
+
+    setItemToCart(item, newQty);
+  };
+
+  const setItemToCart = (item, newQty) => {
+    const cartItem = {
+      product: item?.product,
+      name: item?.name,
+      price: item?.price,
+      image: item?.image,
+      stock: item?.stock,
+      quantity: newQty,
+    };
+
+    dispatch(setCartItem(cartItem));
+  };
+
+  const removeCartItemHandler = (id) => {
+    dispatch(removeCartItem(id));
+  };
 
   return (
     <>
@@ -46,6 +81,7 @@ const Cart = () => {
                         <div className="stockCounter d-inline">
                           <span
                             className="btn btn-danger minus"
+                            onClick={() => decreseQty(item, item.quantity)}
                           >
                             {" "}
                             -{" "}
@@ -58,6 +94,7 @@ const Cart = () => {
                           />
                           <span
                             className="btn btn-primary plus"
+                            onClick={() => increseQty(item, item.quantity)}
                           >
                             {" "}
                             +{" "}
@@ -68,6 +105,7 @@ const Cart = () => {
                         <i
                           id="delete_cart_item"
                           className="fa fa-trash btn btn-danger"
+                          onClick={() => removeCartItemHandler(item?.product)}
                         ></i>
                       </div>
                     </div>

@@ -3,19 +3,21 @@ import Search from "./Search";
 import { useGetMeQuery } from "../../redux/api/userApi";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useLazyLogoutQuery } from "../../redux/api/authApi";
+import { useLogoutMutation } from "../../redux/api/authApi";
 
 const Header = () => {
-
   const navigate = useNavigate();
   const { isLoading } = useGetMeQuery();
-  const[logout, {data}] = useLazyLogoutQuery();
-  const { user } = useSelector((state) => state.auth);
+  const [logout] = useLogoutMutation();
 
-  const logoutHandler = ()=>{
-    logout();
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const logoutHandler = async() => {
+    await logout();
     navigate(0);
-  }
+  };
+
   return (
     <nav className="navbar row">
       <div className="col-12 col-md-3 ps-5">
@@ -28,7 +30,6 @@ const Header = () => {
       <div className="col-12 col-md-6 mt-2 mt-md-0">
         <Search />
       </div>
-
       <div className="col-12 col-md-3 mt-4 mt-md-0 text-center">
         <a href="/cart" style={{ textDecoration: "none" }}>
           <span id="cart" className="ms-3">
@@ -36,7 +37,7 @@ const Header = () => {
             Cart{" "}
           </span>
           <span className="ms-1" id="cart_count">
-            0
+            {cartItems?.length}
           </span>
         </a>
 
