@@ -9,8 +9,6 @@ const Shipping = () => {
   const navigate = useNavigate();
 
   const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [country, setCountry] = useState("");
 
@@ -19,8 +17,6 @@ const Shipping = () => {
   useEffect(() => {
     if (shippingInfo) {
       setAddress(shippingInfo?.address);
-      setCity(shippingInfo?.city);
-      setZipCode(shippingInfo?.zipCode);
       setPhoneNo(shippingInfo?.phoneNo);
       setCountry(shippingInfo?.country);
     }
@@ -28,7 +24,7 @@ const Shipping = () => {
 
   const submiHandler = (e) => {
     e.preventDefault();
-    dispatch(saveShippingInfo({ address, city, phoneNo, zipCode, country }));
+    dispatch(saveShippingInfo({ address, phoneNo, country }));
     navigate("/confirm_order");
   };
 
@@ -39,7 +35,8 @@ const Shipping = () => {
       <div className="row wrapper mb-5">
         <div className="col-10 col-lg-5">
           <form className="shadow rounded bg-body" onSubmit={submiHandler}>
-            <h2 className="mb-4">Shipping Info</h2>
+            <h2 className="mb-4">Order Info</h2>
+
             <div className="mb-3">
               <label htmlFor="address_field" className="form-label">
                 Address
@@ -56,21 +53,6 @@ const Shipping = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="city_field" className="form-label">
-                City
-              </label>
-              <input
-                type="text"
-                id="city_field"
-                className="form-control"
-                name="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
               <label htmlFor="phone_field" className="form-label">
                 Phone No
               </label>
@@ -81,21 +63,6 @@ const Shipping = () => {
                 name="phoneNo"
                 value={phoneNo}
                 onChange={(e) => setPhoneNo(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="zip_code_field" className="form-label">
-                Zip Code
-              </label>
-              <input
-                type="number"
-                id="zip_code_field"
-                className="form-control"
-                name="zipCode"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
                 required
               />
             </div>
