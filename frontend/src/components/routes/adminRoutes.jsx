@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import Dashboard from '../admin/Dashboard';
+import ListProducts from '../admin/ListProducts';
 
 
 const adminRoutes = () => {
@@ -13,6 +14,14 @@ const adminRoutes = () => {
         element={
           <ProtectedRoute admin={true}>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <ProtectedRoute admin={true}>
+            <ListProducts />
           </ProtectedRoute>
         }
       />
