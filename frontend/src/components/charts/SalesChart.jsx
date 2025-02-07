@@ -52,21 +52,23 @@ export default function SalesChart({ salesData }) {
     },
   };
 
-  const labels = ["january", "February", "March", "April", "May", "June", "July"]
+  const labels = salesData?.map((data) => data?.date);
+
+  console.log(salesData)
 
   const data = {
     labels,
     datasets: [
       {
         label: "Sales",
-        data: [12, 45, 68, 45, 23, 44],
+        data: salesData?.map((data) => data?.sales),
         borderColor: "#198753",
         backgroundColor: "rgba(42, 117, 83, 0.5)",
         yAxisID: "y",
       },
       {
         label: "Orders",
-        data: [12, 5, 9, 45, 78, 4],
+        data: salesData?.map((data) => data?.numOrders),
         borderColor: "rgb(220, 52, 69)",
         backgroundColor: "rgba(201, 68, 82, 0.5)",
         yAxisID: "y1",
