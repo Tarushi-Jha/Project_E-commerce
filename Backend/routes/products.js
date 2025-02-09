@@ -6,6 +6,7 @@ import {
   updateProduct,
   deleteProduct,
   getAdminProducts,
+  uploadProductImages,
 } from "../controllers/productControllers.js";
 import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth.js";
 const router = express.Router();
@@ -16,6 +17,9 @@ router
   .post(isAuthenticatedUser, authorizeRoles("admin"), newProduct)
   .get(isAuthenticatedUser, authorizeRoles("admin"), getAdminProducts);
 router.route("/products/:id").get(getProductDetails);
+router
+  .route("/admin/products/:id/upload_images")
+  .put(isAuthenticatedUser, authorizeRoles("admin"), uploadProductImages);
 router
   .route("/admin/products/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), updateProduct);
