@@ -8,6 +8,7 @@ import NewProduct from '../admin/NewProduct';
 import UpdateProduct from '../admin/UpdateProducts';
 import UploadImage from '../admin/UploadImage';
 import ListOrders from '../admin/ListOrders';
+import ProcessOrder from '../admin/ProcessOrder';
 
 
 const adminRoutes = () => {
@@ -58,6 +59,14 @@ const adminRoutes = () => {
         element={
           <ProtectedRoute admin={true}>
             <ListOrders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/order/:id"
+        element={
+          <ProtectedRoute admin={true}>
+            <ProcessOrder />
           </ProtectedRoute>
         }
       />

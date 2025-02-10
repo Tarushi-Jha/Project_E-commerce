@@ -1,15 +1,22 @@
-import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
 import Loader from "../layout/Loader";
 import { toast } from "react-hot-toast";
-import MetaData from "../layout/MetaData";
-import { useOrderDetailsQuery } from "../../redux/api/orderApi";
 
-const OrderDetails = () => {
+import { Link, useParams } from "react-router-dom";
+import MetaData from "../layout/MetaData";
+
+import AdminLayout from "../layout/AdminLayout";
+import { useOrderDetailsQuery, useUpdateOrderMutation } from "../../redux/api/orderApi";
+
+
+const ProcessOrder = () => {
+  const [status, setStatus] = useState("");
+
   const params = useParams();
-  const { data, isLoading, error } = useOrderDetailsQuery(params?.id);
+  const { data } = useOrderDetailsQuery(params?.id);
   const order = data?.order || {};
+
+  const [updateOrder, { error, isSuccess }] = useUpdateOrderMutation();
 
   const {
     shippingInfo,
@@ -23,24 +30,33 @@ const OrderDetails = () => {
   const isPaid = paymentInfo?.status === "paid" ? true : false;
 
   useEffect(() => {
+    if (orderStatus) {
+      setStatus(orderStatus);
+    }
+  }, [orderStatus]);
+
+  useEffect(() => {
     if (error) {
       toast.error(error?.data?.message);
     }
-  }, [error]);
 
-  if (isLoading) return <Loader />;
+    if (isSuccess) {
+      toast.success("Order updated");
+    }
+  }, [error, isSuccess]);
+
+  const updateOrderHandler = (id) => {
+    const data = { status };
+    updateOrder({ id, body: data });
+  };
 
   return (
-    <>
-      <MetaData title={"Order Details"} />
-      <div className="row d-flex justify-content-center">
-        <div className="col-12 col-lg-9 mt-5 order-details">
-          <div className="d-flex justify-content-between align-items-center">
-            <h3 className="mt-5 mb-4">Your Order Details</h3>
-            <a className="btn btn-success" href="/invoice/order/order-id">
-              <i className="fa fa-print"></i> Invoice
-            </a>
-          </div>
+    <AdminLayout>
+      <MetaData title={"Process Order"} />
+      <div className="row d-flex justify-content-around">
+        <div className="col-12 col-lg-8 order-details">
+          <h3 className="mt-5 mb-4">Order Details</h3>
+
           <table className="table table-striped table-bordered">
             <tbody>
               <tr>
@@ -48,7 +64,7 @@ const OrderDetails = () => {
                 <td>{order?._id}</td>
               </tr>
               <tr>
-                <th scope="row">Status</th>
+                <th scope="row">Order Status</th>
                 <td
                   className={
                     String(orderStatus).includes("Delivered")
@@ -59,10 +75,6 @@ const OrderDetails = () => {
                   <b>{orderStatus}</b>
                 </td>
               </tr>
-              <tr>
-                <th scope="row">Date</th>
-                <td>{new Date(order?.createdAt).toLocaleString("en-US")}</td>
-              </tr>
             </tbody>
           </table>
 
@@ -71,7 +83,7 @@ const OrderDetails = () => {
             <tbody>
               <tr>
                 <th scope="row">Name</th>
-                <td>{user.name}</td>
+                <td>{user?.name}</td>
               </tr>
               <tr>
                 <th scope="row">Phone No</th>
@@ -142,9 +154,41 @@ const OrderDetails = () => {
           </div>
           <hr />
         </div>
+
+        <div className="col-12 col-lg-3 mt-5">
+          <h4 className="my-4">Status</h4>
+
+          <div className="mb-3">
+            <select
+              className="form-select"
+              name="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+
+          <button
+            className="btn btn-primary w-100"
+            onClick={() => updateOrderHandler(order?._id)}
+          >
+            Update Status
+          </button>
+
+          <h4 className="mt-5 mb-3">Order Invoice</h4>
+          <Link
+            to={`/invoice/order/${order?._id}`}
+            className="btn btn-success w-100"
+          >
+            <i className="fa fa-print"></i> Generate Invoice
+          </Link>
+        </div>
       </div>
-    </>
+    </AdminLayout>
   );
 };
 
-export default OrderDetails;
+export default ProcessOrder;
