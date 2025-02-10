@@ -9,6 +9,7 @@ import UpdateProduct from '../admin/UpdateProducts';
 import UploadImage from '../admin/UploadImage';
 import ListOrders from '../admin/ListOrders';
 import ProcessOrder from '../admin/ProcessOrder';
+import ListUsers from '../admin/ListUsers';
 
 
 const adminRoutes = () => {
@@ -67,6 +68,14 @@ const adminRoutes = () => {
         element={
           <ProtectedRoute admin={true}>
             <ProcessOrder />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute admin={true}>
+            <ListUsers />
           </ProtectedRoute>
         }
       />
