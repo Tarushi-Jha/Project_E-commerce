@@ -4,29 +4,38 @@ import { toast } from "react-hot-toast";
 import { MDBDataTable } from "mdbreact";
 import { Link } from "react-router-dom";
 import MetaData from "../layout/MetaData";
+
 import AdminLayout from "../layout/AdminLayout";
-import { useGetAdminOrdersQuery } from "../../redux/api/orderApi";
+import {
+  useDeleteOrderMutation,
+  useGetAdminOrdersQuery,
+} from "../../redux/api/orderApi";
 
 const ListOrders = () => {
   const { data, isLoading, error } = useGetAdminOrdersQuery();
 
-  
+  const [
+    deleteOrder,
+    { error: deleteError, isLoading: isDeleteLoading, isSuccess },
+  ] = useDeleteOrderMutation();
 
   useEffect(() => {
     if (error) {
       toast.error(error?.data?.message);
     }
-    // if (deleteError) {
-    //   toast.error(deleteError?.data?.message);
-    // }
-    // if (isSuccess) {
-    //   toast.success("Product Deleted");
-    // }
-  }, [error]);
 
-//   const deleteProductHandler = (id) => {
-//     deleteProduct(id);
-//   };
+    if (deleteError) {
+      toast.error(deleteError?.data?.message);
+    }
+
+    if (isSuccess) {
+      toast.success("Order Deleted");
+    }
+  }, [error, deleteError, isSuccess]);
+
+  const deleteOrderHandler = (id) => {
+    deleteOrder(id);
+  };
 
   const setOrders = () => {
     const orders = {
@@ -46,6 +55,7 @@ const ListOrders = () => {
           field: "orderStatus",
           sort: "asc",
         },
+
         {
           label: "Actions",
           field: "actions",
@@ -63,15 +73,16 @@ const ListOrders = () => {
         actions: (
           <>
             <Link
-              to={`/admin/order/${order?._id}`}
+              to={`/admin/orders/${order?._id}`}
               className="btn btn-outline-primary"
             >
               <i className="fa fa-pencil"></i>
             </Link>
+
             <button
               className="btn btn-outline-danger ms-2"
-            //   onClick={() => deleteProductHandler(product?._id)}
-            //   disabled={isDeleteLoading}
+              onClick={() => deleteOrderHandler(order?._id)}
+              disabled={isDeleteLoading}
             >
               <i className="fa fa-trash"></i>
             </button>
@@ -89,7 +100,7 @@ const ListOrders = () => {
     <AdminLayout>
       <MetaData title={"All Orders"} />
 
-      <h1 className="my-5">{data?.order?.length} Orders</h1>
+      <h1 className="my-5">{data?.orders?.length} Orders</h1>
 
       <MDBDataTable
         data={setOrders()}
