@@ -23,10 +23,12 @@ app.use(cookieParser());
 import productRoutes from "./routes/products.js";
 import authRoutes from "./routes/auth.js";
 import orderRoutes from "./routes/order.js";
+import paymentRoutes from "./routes/payment.js";
 
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", orderRoutes);
+app.use("/api/v1", paymentRoutes);
 
 // Using error middleware
 app.use(errorMiddleware);
