@@ -47,8 +47,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please select payment method"],
         enum: {
-          values: ["COD", "UPI"],
-          message: "Please select: COD or UPI",
+          values: ["COD", "Card"],
+          message: "Please select: COD or Card",
         },
     },
     paymentInfo: {

@@ -25,6 +25,10 @@ const PaymentMethod = () => {
 
   useEffect(() => {
     if (checkoutData) {
+      console.log("=========================================");
+      console.log(checkoutData);
+      console.log("=========================================");
+      
       window.location.href = checkoutData?.url;
     }
     if (checkoutError) {
