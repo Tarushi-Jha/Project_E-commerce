@@ -48,10 +48,6 @@ export const stripeCheckoutSession = catchAsyncErrors(
       line_items,
     });
 
-    console.log("========================================================")
-    console.log(session)
-    console.log("========================================================")
-
     res.status(200).json({
       url: session.url,
     });
@@ -65,7 +61,6 @@ const getOrderItems = async (line_items) => {
     line_items?.data?.forEach(async (item) => {
       const product = await stripe.products.retrieve(item.price.product);
       const productId = product.metadata.productId;
-    
 
       cartItems.push({
         product: productId,
@@ -84,6 +79,7 @@ const getOrderItems = async (line_items) => {
 
 // Create new order after payment   =>  /api/v1/payment/webhook
 export const stripeWebhook = catchAsyncErrors(async (req, res, next) => {
+  console.log("Webhook received");
   try {
     const signature = req.headers["stripe-signature"];
 
@@ -101,7 +97,6 @@ export const stripeWebhook = catchAsyncErrors(async (req, res, next) => {
       );
 
       const orderItems = await getOrderItems(line_items);
-     
 
       const user = session.client_reference_id;
 
