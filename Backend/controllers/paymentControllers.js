@@ -1,8 +1,20 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import Order from "../models/order.js";
+import Product from "../models/product.js";
 
 import Stripe from "stripe";
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Helper function to update product stock
+async function updateStock(orderItems) {
+  for (const item of orderItems) {
+    const product = await Product.findById(item?.product?.toString());
+    if (product) {
+      product.stock = product.stock - item.quantity;
+      await product.save({ validateBeforeSave: false });
+    }
+  }
+}
 
 // Create stripe checkout session   =>  /api/v1/payment/checkout_session
 export const stripeCheckoutSession = catchAsyncErrors(
@@ -130,7 +142,10 @@ export const stripeWebhook = catchAsyncErrors(async (req, res, next) => {
         user,
       };
 
-      await Order.create(orderData);
+      const order = await Order.create(orderData);
+
+      // Update product stock after order is created
+      await updateStock(orderItems);
 
       res.status(200).json({ success: true });
     }

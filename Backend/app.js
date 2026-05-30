@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 const app = express();
-import dotenv from "dotenv";
 import { connectDatabase } from "./config/dbConnect.js";
 import errorMiddleware from "./middlewares/errors.js";
 import cookieParser from "cookie-parser";
@@ -11,15 +13,13 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-dotenv.config({ path: "config/.env" });
-
 //Connecting to DataBase
 connectDatabase();
 
 app.use(
   express.json({
     limit: "10mb",
-    verify: (req, res, buf) => {  
+    verify: (req, res, buf) => {
       req.rawBody = buf.toString();
     },
   })
@@ -28,15 +28,15 @@ app.use(
 app.use(cookieParser());
 
 //Import all routes
-import productRoutes from "./routes/products.js";
-import authRoutes from "./routes/auth.js";
-import orderRoutes from "./routes/order.js";
-import paymentRoutes from "./routes/payment.js";
+const productRoutes = await import("./routes/products.js");
+const authRoutes = await import("./routes/auth.js");
+const orderRoutes = await import("./routes/order.js");
+const paymentRoutes = await import("./routes/payment.js");
 
-app.use("/api/v1", productRoutes);
-app.use("/api/v1", authRoutes);
-app.use("/api/v1", orderRoutes);
-app.use("/api", paymentRoutes);
+app.use("/api/v1", productRoutes.default);
+app.use("/api/v1", authRoutes.default);
+app.use("/api/v1", orderRoutes.default);
+app.use("/api", paymentRoutes.default);
 
 // Using error middleware
 app.use(errorMiddleware);
